@@ -1,6 +1,13 @@
 import { React } from 'react'
+import {
+  // Switch,
+  Route,
+  Link,
+} from 'react-router-dom'
 import { Navbar, Container, Nav, NavDropdown } from 'react-bootstrap'
 import logo from '../images/Logo.jpg'
+
+// TODO: отцентровать навбар!!!
 
 export const Header = () => {
   return (
@@ -22,14 +29,16 @@ export const Header = () => {
           <Navbar.Collapse id="responsive-navbar-nav">
             <Nav className="me-auto">
               <NavDropdown title="Пользователи" id="collasible-nav-dropdown">
-                <NavDropdown.Item href="#action/3.1">
-                  Список пользователей
+                <NavDropdown.Item>
+                  <Link to="/api/users/getUsers">Список пользователей</Link>
                 </NavDropdown.Item>
-                <NavDropdown.Item href="#action/3.2">
-                  Добавить пользователя
+                <NavDropdown.Item>
+                  <Link to="/api/users/addUser">Добавить пользователя</Link>
                 </NavDropdown.Item>
-                <NavDropdown.Item href="#action/3.3">
-                  Редактировать пользователя
+                <NavDropdown.Item>
+                  <Link to="/api/users/editUser">
+                    Редактировать пользователя
+                  </Link>
                 </NavDropdown.Item>
               </NavDropdown>
               <NavDropdown
@@ -46,10 +55,14 @@ export const Header = () => {
               <Nav.Link href="#pricing">Устройства</Nav.Link>
             </Nav>
             <Nav>
-              <Nav.Link href="#deets">Настройки</Nav.Link>
-              <Nav.Link eventKey={2} href="#memes">
-                Выйти
+              {/* <Nav.Item>
+                <Link to="/api/settings/mainSettings">Настройки</Link>
+              </Nav.Item> */}
+              <Nav.Link>
+                <Link to="/api/settings/mainSettings">Настройки</Link>
               </Nav.Link>
+
+              <Nav.Link>Выйти</Nav.Link>
             </Nav>
           </Navbar.Collapse>
         </Container>
