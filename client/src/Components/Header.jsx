@@ -1,10 +1,10 @@
 import { React } from 'react'
 import {
   // Switch,
-  Route,
+  // Route,
   Link,
 } from 'react-router-dom'
-import { Navbar, Container, Nav, NavDropdown } from 'react-bootstrap'
+import { Navbar, Container, Nav, NavDropdown, Button } from 'react-bootstrap'
 import logo from '../images/Logo.jpg'
 
 // TODO: отцентровать навбар!!!
@@ -55,13 +55,9 @@ export const Header = () => {
               <Nav.Link href="#pricing">Устройства</Nav.Link>
             </Nav>
             <Nav>
-              {/* <Nav.Item>
-                <Link to="/api/settings/mainSettings">Настройки</Link>
-              </Nav.Item> */}
               <Nav.Link>
-                <Link to="/api/settings/mainSettings">Настройки</Link>
+                <Link to="/">Настройки</Link>
               </Nav.Link>
-
               <Nav.Link>Выйти</Nav.Link>
             </Nav>
           </Navbar.Collapse>

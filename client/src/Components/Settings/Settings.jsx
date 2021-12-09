@@ -1,5 +1,14 @@
-import React from 'react'
+import { React } from 'react'
+import { Chart } from './Chart'
+import { Container } from 'react-bootstrap'
 
 export const Settings = () => {
-  return <div>settings</div>
+  return (
+    <>
+      <Container>
+        settings
+        <Chart />
+      </Container>
+    </>
+  )
 }
