@@ -1,9 +1,9 @@
 import psycopg2
-from  psycopg2 import *
-import json
+from psycopg2 import *
+# import json
 
 
-
+# ------------------- CONNECTION ------------------- 
 def conn():
     connection_open = psycopg2.connect(user="postgres",
                                        password="Propassomg123",
@@ -12,7 +12,9 @@ def conn():
                                        database="postgres")
     return connection_open
 
+# ------------------- CONNECTION -------------------
 
+# ------------------- USER -------------------
 def get_users():
     try:
         connection = conn()
@@ -65,7 +67,6 @@ def addUser(lastName, firstName, middleName, subdivision, card):
     finally:
         pass
 
-
 def delete_user(id):
     try:
         id = int(id)
@@ -79,7 +80,73 @@ def delete_user(id):
     finally:
         cursor.close()
         connection.close()
+# ------------------- USER -------------------
 
+# ------------------- DEVICE -------------------
+def get_devices():
+    try:
+        connection = conn()
+        cursor = connection.cursor()
+        get_devices = 'select * from devices'
+        cursor.execute(get_devices)
+        result = cursor.fetchall()
+        # print(result)
+        return result
+    except Exception as e:
+        print(e)
+    finally:
+        cursor.close()
+        connection.close()
+
+def add_new_device(name, address, open_time):
+    try:
+        time = int(open_time)
+        connection = conn()
+        cursor = connection.cursor()
+        add_device = f"insert into devices (name, address, open_time) values ('{name}', '{address}', {time}"
+        cursor.execute(add_device)
+        connection.commit()
+        cursor.close()
+        connection.close()
+        return True
+    except Exception as e:
+        return e
+    finally:
+        cursor.close()
+        connection.close()
+
+def update_device(id, name, address, open_time):
+    try:
+        id = int(id)
+        time = int(open_time)
+        connection = conn()
+        cursor = connection.cursor()
+        update_device = f"update devices SET name = '{name}', address = '{address}', open_time = {time} WHERE ID = {id}"
+        cursor.execute(update_device)
+        connection.commit()
+        cursor.close()
+        connection.close()
+        return True
+    except Exception as e:
+        return e
+    finally:
+        cursor.close()
+        connection.close()
+
+def delete_device(id):
+    try:
+        id = int(id)
+        connection = conn()
+        cursor = connection.cursor()
+        delete_device = f"delete from devices where id='{id}'"
+        cursor.execute(delete_user)
+        connection.commit()
+    except Exception as e:
+        return e
+    finally:
+        cursor.close()
+        connection.close()
+# ------------------- DEVICE -------------------
 
 def check_card_in_DB(card):
     try:
@@ -97,4 +164,5 @@ def check_card_in_DB(card):
         cursor.close()
         connection.close()
 
+        
 # print(check_card_in_DB('18B8D2'))

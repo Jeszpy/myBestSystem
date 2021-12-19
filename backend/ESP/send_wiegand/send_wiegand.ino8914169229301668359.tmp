@@ -1,0 +1,104 @@
+#include <ArduinoJson.h>
+#include <HTTPClient.h>
+#include <WiFiMulti.h>
+#include <Wiegand.h>
+
+
+#define PIN_D0 27
+#define PIN_D1 14
+
+WiFiMulti wifiMulti;
+Wiegand wiegand;
+
+//const char *AP_SSID = "BUP";
+//const char *AP_PWD = "belprom1";
+
+const char *AP_SSID = "WiFi_61";
+const char *AP_PWD = "propasswifi";
+
+//const char *response = "";
+//String card = "";
+
+void setup() {
+  pinMode(23, OUTPUT);
+  
+  wifiMulti.addAP(AP_SSID, AP_PWD);
+  delay(4000);
+  
+  Serial.begin(115200);
+  
+  wiegand.onReceive(receivedData, "_");
+  wiegand.begin(Wiegand::LENGTH_ANY, true);
+  
+  pinMode(PIN_D0, INPUT);
+  pinMode(PIN_D1, INPUT);
+  attachInterrupt(digitalPinToInterrupt(PIN_D0), pinStateChanged, CHANGE);
+  attachInterrupt(digitalPinToInterrupt(PIN_D1), pinStateChanged, CHANGE);
+  
+  pinStateChanged();
+
+}
+
+void loop() {
+  noInterrupts();
+  wiegand.flush();
+  interrupts();
+  delay(100);
+//  postDataToServer();
+//  delay(5000);
+}
+
+void pinStateChanged() {
+  wiegand.setPin0State(digitalRead(PIN_D0));
+  wiegand.setPin1State(digitalRead(PIN_D1));
+}
+
+void receivedData(uint8_t* data, uint8_t bits, const char* message) {
+    String CardID = "";
+    
+    uint8_t bytes = (bits+6)/8;
+    for (int i=0; i<bytes; i++) {
+        CardID += String(data[i], HEX);
+    }
+    CardID.toUpperCase();
+//    card = CardID;
+    postDataToServer(CardID);
+  
+}
+
+void postDataToServer(String Card) {  
+  if (wifiMulti.run() == WL_CONNECTED) {
+    HTTPClient http;   
+     
+    http.begin("http://192.168.0.176:8000/validate-card");  
+    http.addHeader("Content-Type", "application/json");  
+//    http.addHeader("Content-Type", "text/plain");       
+     
+    StaticJsonDocument<200> doc;
+    doc["card"] = Card;
+//     
+//    String requestBody = Card;
+    String requestBody = "";
+    serializeJson(doc, requestBody);
+     
+    int httpResponseCode = http.POST(requestBody);
+    
+    if(httpResponseCode>0){
+      
+      String response = http.getString();                       
+
+      Serial.println(response);
+      deserializeJson(doc, response);
+
+      String cmd = doc["cmd"];
+      int openTime = doc["time"];
+      
+      if (cmd == "open"){
+        digitalWrite(23, HIGH);
+        delay(openTime);
+        digitalWrite(23, LOW);
+        }
+      else {digitalWrite(23, LOW);}
+    }  
+  }
+}
